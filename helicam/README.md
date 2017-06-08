@@ -1,5 +1,5 @@
 # FiveM - helicam
-Version 1.1 - 2017/06/08
+Version 1.2 - 2017/06/08
 
 Instructions:
  * Download resource
@@ -10,3 +10,4 @@ Instructions:
  
  Changelog:
  * 2017/06/08: Added smoothing to camera movement.
+ * 2017/06/08: Added Nightvision and Thermal Vision

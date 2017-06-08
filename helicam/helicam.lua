@@ -1,5 +1,5 @@
 -- FiveM Heli Cam by mraes
--- Version 1.1 2017-06-08
+-- Version 1.2 2017-06-08
 
 -- config
 local fov_max = 80.0
@@ -8,11 +8,13 @@ local zoomspeed = 2.0 -- camera zoom speed
 local speed_lr = 3.0 -- speed by which the camera pans left-right 
 local speed_ud = 3.0 -- speed by which the camera pans up-down
 local toggle_control = 51 -- control id of the button by which to toggle the helicam mode. Default: INPUT_CONTEXT,51 is the E key
+local toggle_vision = 45 -- control id to toggle vision mode (default key is arrow down)
 
 -- Script starts here
 local helicam = false
 local polmav_hash = GetHashKey("polmav")
 local fov = (fov_max+fov_min)*0.5
+local vision_state = 0 -- 0 is normal, 1 is nightmode, 2 is thermal vision
 Citizen.CreateThread(function()
 	while true do
         	Citizen.Wait(0)
@@ -42,6 +44,10 @@ Citizen.CreateThread(function()
 					PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
 					break
 				end
+				if IsControlJustPressed(0, toggle_vision) then
+					PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
+					ChangeVision()
+				end
 				CheckInputRotation(cam)
 				HandleZoom(cam)
 				local zoomvalue = (1.0/(fov_max-fov_min))*(fov-fov_min)
@@ -59,6 +65,8 @@ Citizen.CreateThread(function()
 			RenderScriptCams(false, false, 0, 1, 0) -- Return to gameplay camera
 			SetScaleformMovieAsNoLongerNeeded(scaleform) -- Cleanly release the scaleform
 			DestroyCam(cam, false)
+			SetNightvision(false)
+			SetSeethrough(false)
 		end
 	end
 end)
@@ -66,6 +74,20 @@ end)
 function IsVehiclePolmavAndHighEnough(vehicle)
 	local height = GetEntityHeightAboveGround(vehicle)
 	return IsVehicleModel(vehicle, polmav_hash) and height > 1.5
+end
+
+function ChangeVision()
+	if vision_state == 0 then
+		SetNightvision(true)
+		vision_state = 1
+	elseif vision_state == 1 then
+		SetNightvision(false)
+		SetSeethrough(true)
+		vision_state = 2
+	else
+		SetSeethrough(false)
+		vision_state = 0
+	end
 end
 
 
