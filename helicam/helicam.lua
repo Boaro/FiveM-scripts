@@ -7,6 +7,7 @@ local fov_min = 10.0 -- max zoom level (smaller fov is more zoom)
 local zoomspeed = 2.0 -- camera zoom speed
 local speed_lr = 10.0 -- speed by which the camera pans left-right 
 local speed_ud = 5.0 -- speed by which the camera pans up-down
+local toggle_control = 51 -- control id of the button by which to toggle the helicam mode. Default: INPUT_CONTEXT,51 is the E key
 
 -- Script starts here
 local helicam = false
@@ -15,7 +16,7 @@ local fov = (fov_max+fov_min)*0.5
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-		if IsControlJustPressed(0, 51) and IsVehiclePolmavAndHighEnough(GetVehiclePedIsIn(GetPlayerPed(-1))) then -- Default for control 51, INPUT_CONTEXT is the E key
+		if IsControlJustPressed(0, toggle_control) and IsVehiclePolmavAndHighEnough(GetVehiclePedIsIn(GetPlayerPed(-1))) then 
 				PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
 				helicam = true
 		end
@@ -37,7 +38,7 @@ Citizen.CreateThread(function()
             PopScaleformMovieFunctionVoid()
 			
             while helicam and not IsEntityDead(lPed) and IsVehiclePolmavAndHighEnough(heli) do
-				if IsControlJustPressed(0, 51) then -- Default for control 51, INPUT_CONTEXT is the E key
+				if IsControlJustPressed(0, toggle_control) then
 					PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
 					break
 				end
