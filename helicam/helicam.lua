@@ -14,18 +14,18 @@ local helicam = false
 local polmav_hash = GetHashKey("polmav")
 local fov = (fov_max+fov_min)*0.5
 Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(0)
+	while true do
+        	Citizen.Wait(0)
 		if IsControlJustPressed(0, toggle_control) and IsVehiclePolmavAndHighEnough(GetVehiclePedIsIn(GetPlayerPed(-1))) then 
-				PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
-				helicam = true
+			PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
+			helicam = true
 		end
-		
-        if helicam then
-            local scaleform = RequestScaleformMovie("HELI_CAM")
-            while not HasScaleformMovieLoaded(scaleform) do
+			
+		if helicam then
+			local scaleform = RequestScaleformMovie("HELI_CAM")
+			while not HasScaleformMovieLoaded(scaleform) do
 				Citizen.Wait(0)
-            end
+			end
 			local lPed = GetPlayerPed(-1)
 			local heli = GetVehiclePedIsIn(lPed)
 			local cam = CreateCam("DEFAULT_SCRIPTED_FLY_CAMERA", 2)
@@ -33,11 +33,11 @@ Citizen.CreateThread(function()
 			SetCamRot(cam, 0.0,0.0,GetEntityHeading(heli))
 			SetCamFov(cam, fov)
 			RenderScriptCams(true, false, 0, 1, 0)
-            PushScaleformMovieFunction(scaleform, "SET_CAM_LOGO")
-            PushScaleformMovieFunctionParameterInt(1) -- 0 for nothing, 1 for LSPD logo
-            PopScaleformMovieFunctionVoid()
-			
-            while helicam and not IsEntityDead(lPed) and IsVehiclePolmavAndHighEnough(heli) do
+			PushScaleformMovieFunction(scaleform, "SET_CAM_LOGO")
+			PushScaleformMovieFunctionParameterInt(1) -- 0 for nothing, 1 for LSPD logo
+			PopScaleformMovieFunctionVoid()
+
+			while helicam and not IsEntityDead(lPed) and IsVehiclePolmavAndHighEnough(heli) do
 				if IsControlJustPressed(0, toggle_control) then
 					PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
 					break
@@ -45,14 +45,14 @@ Citizen.CreateThread(function()
 				CheckInputRotation(cam)
 				HandleZoom(cam)
 				local zoomvalue = (1.0/(fov_max-fov_min))*(fov-fov_min)
-                HideHUDThisFrame()
-                PushScaleformMovieFunction(scaleform, "SET_ALT_FOV_HEADING")
-                PushScaleformMovieFunctionParameterFloat(GetEntityCoords(heli).z)
-                PushScaleformMovieFunctionParameterFloat(zoomvalue)
-                PushScaleformMovieFunctionParameterFloat(GetCamRot(cam, 2).z)
-                PopScaleformMovieFunctionVoid()
-                DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255)
-                Citizen.Wait(0)
+				HideHUDThisFrame()
+				PushScaleformMovieFunction(scaleform, "SET_ALT_FOV_HEADING")
+				PushScaleformMovieFunctionParameterFloat(GetEntityCoords(heli).z)
+				PushScaleformMovieFunctionParameterFloat(zoomvalue)
+				PushScaleformMovieFunctionParameterFloat(GetCamRot(cam, 2).z)
+				PopScaleformMovieFunctionVoid()
+				DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255)
+				Citizen.Wait(0)
 			end
 			helicam = false
 			fov = (fov_max+fov_min)*0.5 -- reset to starting zoom level
