@@ -1,5 +1,5 @@
 # FiveM - helicam
-Version 1.0.0 - 2017/06/08
+Version 1.1 - 2017/06/08
 
 Instructions:
  * Download resource
@@ -7,3 +7,6 @@ Instructions:
  * Press the INPUT_CONTEXT control in-game (default this key is E)
  * ??
  * Helicam!
+ 
+ Changelog:
+ * 2017/06/08: Added smoothing to camera movement.

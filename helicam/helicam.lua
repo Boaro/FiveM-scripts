@@ -1,12 +1,12 @@
 -- FiveM Heli Cam by mraes
--- Version 1.0 2017-06-08
+-- Version 1.1 2017-06-08
 
 -- config
 local fov_max = 80.0
 local fov_min = 10.0 -- max zoom level (smaller fov is more zoom)
 local zoomspeed = 2.0 -- camera zoom speed
-local speed_lr = 10.0 -- speed by which the camera pans left-right 
-local speed_ud = 5.0 -- speed by which the camera pans up-down
+local speed_lr = 3.0 -- speed by which the camera pans left-right 
+local speed_ud = 3.0 -- speed by which the camera pans up-down
 local toggle_control = 51 -- control id of the button by which to toggle the helicam mode. Default: INPUT_CONTEXT,51 is the E key
 
 -- Script starts here
@@ -91,7 +91,6 @@ function CheckInputRotation(cam)
 	if rightAxisX ~= 0.0 or rightAxisY ~= 0.0 then
 		new_z = rotation.z + rightAxisX*-1.0*(speed_ud)
 		new_x = math.max(math.min(20.0, rotation.x + rightAxisY*-1.0*(speed_lr)), -89.5) -- Clamping at top (cant see top of heli) and at bottom (doesn't glitch out in -90deg)
-		Citizen.Trace(new_x)
 		SetCamRot(cam, new_x, 0.0, new_z, 2)
 	end
 end
@@ -99,10 +98,13 @@ end
 function HandleZoom(cam)
 	if IsControlJustPressed(0,241) then -- Scrollup
 		fov = math.max(fov - zoomspeed, fov_min)
-		SetCamFov(cam, fov)
 	end
 	if IsControlJustPressed(0,242) then
-		fov = math.min(fov + zoomspeed, fov_max) -- ScrollDown
-		SetCamFov(cam, fov)			
+		fov = math.min(fov + zoomspeed, fov_max) -- ScrollDown		
 	end
+	local current_fov = GetCamFov(cam)
+	if math.abs(fov-current_fov) < 0.1 then -- the difference is too small, just set the value directly to avoid unneeded updates to FOV of order 10^-5
+		fov = current_fov
+	end
+	SetCamFov(cam, current_fov + (fov - current_fov)*0.05) -- Smoothing of camera zoom
 end
